@@ -28,7 +28,7 @@ wss.on('connection', function(client, request) {
     return c.match(/^\s*wsname/) !== null;
   });
   wsname = wsname.split('=')[1];
-
+  console.log("first connexion from", wsname);
   // greet the newly connected user
   client.send('Welcome, ' + decodeURIComponent(wsname) + '!');
 
