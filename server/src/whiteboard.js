@@ -29,6 +29,12 @@ export default class WhiteBoardServer {
     this.server = new WebSocketServer({ server: webserver, path: path });
     this.server.on("connection", (socket, request) => {
       this.onConnection(socket, request);
+      socket.on("message", (message) => {
+        this.onMessage(socket, message);
+      });
+      socket.on("close", () => {
+        this.onClose(socket);
+      });
     });
   }
 
@@ -53,4 +59,40 @@ export default class WhiteBoardServer {
     );
 
     this.clients.push(cli);
+  }
+  onMessage(_socket, message) {
+      console.log("Received message %s", message);
+      const data = JSON.parse(message);
+      const cli = this.clients.find((cli) => cli.id == data.id);
+      const canv = this.clients.find((cli) => cli.canvasName == data.canvas);
+      if (cli && canv) {
+        canv.messages.push({
+          color: cli.color,
+          oldPos: data.oldPos,
+          newPos: data.newPos,
+        });
+        this.server.clients.forEach((client) => {
+          client.send(
+            JSON.stringify({
+              type: "draw",
+              color: cli.color,
+              canvas: data.canvas,
+              oldPos: data.oldPos,
+              newPos: data.newPos,
+            })
+          );
+        });
+      }
+    }
+
+    onClose(socket) {
+      console.log("Connection closed");
+      const cli = this.clients.find((cli) => cli.socket == socket);
+      if (cli) {
+        this.server.clients.forEach((client) => {
+          client.send(JSON.stringify({ type: "close", canvas: cli.canvasName }));
+        });
+        this.clients = this.clients.filter((cli) => cli.socket != socket);
+      }
+    }
   }
