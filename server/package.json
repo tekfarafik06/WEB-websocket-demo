@@ -1,0 +1,33 @@
+{
+  "name": "whiteboard_server",
+  "version": "1.0.0",
+  "description": "whiteboard server",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --setupFiles ./test/config.js",
+    "start": "node src/index.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverage": true
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "dependencies": {
+    "express": "^4.18.2",
+    "http": "^0.0.1-security",
+    "path": "^0.12.7",
+    "unique-names-generator": "^4.7.1",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "@babel/preset-env": "^7.20.2",
+    "babel-jest": "^29.5.0"
+  }
+}
